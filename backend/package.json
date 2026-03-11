@@ -1,0 +1,21 @@
+{
+  "name": "portion-patrol",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node app.js",
+    "seed": "node ./tasks/seed.js",
+    "test": "node ./tasks/test.js"
+  },
+  "keywords": [],
+  "author": "Owen Treanor & Jimmy Colgan",
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "express": "^4.18.2",
+    "express-session": "^1.18.1",
+    "mongodb": "^6.15.0"
+  }
+}
