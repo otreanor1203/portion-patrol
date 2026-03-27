@@ -15,7 +15,9 @@ const constructorMethod = (app) => {
 
       return res.json({ loggedIn: "yes" });
     } catch (e) {
-      return res.status(e.status).json({ loggedIn: "no" });
+      return res.status(e.status || 500).json({
+        error: e.error || "Login failed",
+      });
     }
   });
 
@@ -28,7 +30,9 @@ const constructorMethod = (app) => {
       let newUser = await users.createUser(username, password, admin);
       return res.json({registered: "yes"})
     } catch (e) {
-      return res.status(e.status).json({registered: "no"});
+      return res.status(e.status || 500).json({
+        error: e.error || "Registration failed",
+      });
     }
   });
 };
