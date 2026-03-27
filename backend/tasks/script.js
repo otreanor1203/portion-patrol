@@ -25,6 +25,13 @@ const parsedData = lines.slice(1).map((line) => {
 
 const chipotleCollection = await chipotles();
 
+for (let i = 0; i < parsedData.length; i++) {
+    parsedData[i].ratings = [];
+    parsedData[i].likes = 0;
+    parsedData[i].dislikes = 0;
+    parsedData[i].overallRating = "N/A";
+}
+
 const insertInfo = await chipotleCollection.insertMany(parsedData);
 
 if (!insertInfo.acknowledged) {

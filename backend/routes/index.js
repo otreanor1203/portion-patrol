@@ -1,5 +1,7 @@
 import { checkUsername, checkPassword } from "../helpers.js";
 import users from "../data/users.js";
+import userRoutes from "./users.js";
+import chipotleRoutes from "./chipotles.js";
 
 const constructorMethod = (app) => {
   app.post("/login", async (req, res) => {
@@ -31,6 +33,13 @@ const constructorMethod = (app) => {
       return res.status(e.status).json({registered: "no"});
     }
   });
+
+  app.use("/users", userRoutes);
+  app.use("/chipotles", chipotleRoutes);
+    app.use("*", (req, res) => {
+      res.status(404).json({ error: "Route Not found" });
+    });
+
 };
 
 export default constructorMethod;
