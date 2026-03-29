@@ -1,0 +1,37 @@
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+  
+    padding: 15px 30px;
+    background-color: #42342A;
+  
+    display: flex;
+    align-items: center;
+  }
+  
+  .nav-left {
+    display: flex;
+    gap: 20px;
+  }
+  
+  .nav-right {
+    margin-left: auto; /* 🔥 pushes it to the far right */
+  }
+  
+  .nav-link {
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+  }
+  
+  .account-icon {
+    color: white;
+    display: flex;
+    align-items: center;
+  }
+  
+  .account-icon:hover {
+    color: #836953;
+  }

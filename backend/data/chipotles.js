@@ -58,7 +58,7 @@ const exportedMethods = {
 
   async getAllChipotles() {
     const chipotleCollection = await chipotles();
-    const chipotleList = await chipotleCollection.find({}).toArray();
+    let chipotleList = await chipotleCollection.find({}).toArray();
     if (!chipotleList) {
       throw {
         status: 500,
