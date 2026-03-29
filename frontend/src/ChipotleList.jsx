@@ -34,7 +34,7 @@ function ChipotleList() {
         type="text"
         placeholder="Search by city"
         value={search}
-        onChange={(e) => setSearch(e.target.value.trim())}
+        onChange={(e) => setSearch(e.target.value.trimStart())}
       />
 
       {loading ? (
