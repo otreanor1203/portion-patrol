@@ -10,8 +10,7 @@ export default function AuthForm() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState("");
-  const [loggedIn, setLoggedIn] = useState(false);
-  const { setCurrentUser } = useContext(AuthContext);
+  const { currentUser, setCurrentUser } = useContext(AuthContext);
 
   const handleSubmit = async () => {
     setMessage("");
@@ -36,31 +35,30 @@ export default function AuthForm() {
 
         setMessage("Signup successful");
       } else {
-        await axios.post(
+        const response = await axios.post(
           "http://localhost:3000/login",
           { username, password },
           { withCredentials: true },
         );
 
-        setLoggedIn(true);
         setUsername("");
         setPassword("");
         setConfirmPassword("");
 
         setMessage("Login successful");
-        setCurrentUser({ username });
+        setCurrentUser(response.data);
       }
     } catch (e) {
+      console.error(e);
       setMessage(e.response?.data?.error || "Request failed");
     }
   };
 
-  if (loggedIn) {
+  if (currentUser) {
     return (
       <div className="container">
         <h1>Portion Patrol</h1>
         <p>You are logged in</p>
-        <button onClick={() => setLoggedIn(false)}>Logout</button>
       </div>
     );
   }

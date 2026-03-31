@@ -39,6 +39,11 @@ const constructorMethod = (app) => {
     }
   });
 
+  app.post("/signout", async (req, res) => {
+    req.session.destroy();
+    return res.json({ loggedIn: "no" });
+  });
+
   app.use("/users", userRoutes);
   app.use("/chipotles", chipotleRoutes);
     app.use("*", (req, res) => {
