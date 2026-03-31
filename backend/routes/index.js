@@ -14,6 +14,7 @@ const constructorMethod = (app) => {
       let user = await users.login(username, password);
 
       req.session.user = user;
+      console.log(req.session.user);
 
       return res.json({ loggedIn: "yes" });
     } catch (e) {

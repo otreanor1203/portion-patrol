@@ -1,6 +1,8 @@
 import { useState } from "react";
 import axios from "axios";
 import "./App.css";
+import { useContext } from "react";
+import { AuthContext } from "./context/AuthContext.jsx";
 
 export default function AuthForm() {
   const [formType, setFormType] = useState("login");
@@ -9,6 +11,7 @@ export default function AuthForm() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState("");
   const [loggedIn, setLoggedIn] = useState(false);
+  const { setCurrentUser } = useContext(AuthContext);
 
   const handleSubmit = async () => {
     setMessage("");
@@ -28,7 +31,7 @@ export default function AuthForm() {
         await axios.post(
           "http://localhost:3000/register",
           { username, password },
-          { withCredentials: true }
+          { withCredentials: true },
         );
 
         setMessage("Signup successful");
@@ -36,7 +39,7 @@ export default function AuthForm() {
         await axios.post(
           "http://localhost:3000/login",
           { username, password },
-          { withCredentials: true }
+          { withCredentials: true },
         );
 
         setLoggedIn(true);
@@ -45,6 +48,7 @@ export default function AuthForm() {
         setConfirmPassword("");
 
         setMessage("Login successful");
+        setCurrentUser({ username });
       }
     } catch (e) {
       setMessage(e.response?.data?.error || "Request failed");
@@ -71,7 +75,6 @@ export default function AuthForm() {
       </div>
 
       {message && <p className="message">{message}</p>}
-
       <input
         type="text"
         placeholder="Username"

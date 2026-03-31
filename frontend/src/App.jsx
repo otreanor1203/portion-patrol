@@ -4,18 +4,28 @@ import Navbar from "./Navbar";
 import ChipotleList from "./ChipotleList";
 import Account from "./Account.jsx";
 import Favorites from "./Favorites.jsx";
+import PrivateRoute from "./PrivateRoute.jsx";
+import { AuthProvider } from "./context/AuthContext.jsx";
 
 function App() {
   return (
-    <BrowserRouter>
-      <Navbar />
-      <Routes>
-        <Route path="/" element={<Form />} />
-        <Route path="/find-chipotle" element={<ChipotleList />} />
-        <Route path="/account" element={<Account />} />
-        <Route path="/favorites" element={<Favorites />} />
-      </Routes>
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<Form />} />
+          <Route path="/find-chipotle" element={<PrivateRoute />}>
+            <Route path="/find-chipotle" element={<ChipotleList />} />
+          </Route>
+          <Route path="/account" element={<PrivateRoute />}>
+            <Route path="/account" element={<Account />} />
+          </Route>
+          <Route path="/favorites" element={<PrivateRoute />}>
+            <Route path="/favorites" element={<Favorites />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 
