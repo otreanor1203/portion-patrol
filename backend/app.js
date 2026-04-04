@@ -2,10 +2,11 @@ import express from "express";
 import session from "express-session";
 import configRoutesFunction from "./routes/index.js";
 import cors from "cors";
-import { csrf } from "lusca";
+import pkg from "lusca";
 
 const app = express();
 app.use(express.json());
+const { csrf } = pkg;
 
 app.use(
   cors({
@@ -46,6 +47,10 @@ app.use(async (req, res, next) => {
       auth,
   );
   next();
+});
+
+app.get("/csrf-token", (req, res) => {
+  return res.json({ csrfToken: req.csrfToken() });
 });
 
 app.use("/getSession", async (req, res, next) => {

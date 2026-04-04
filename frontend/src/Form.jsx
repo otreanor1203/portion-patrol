@@ -10,13 +10,18 @@ export default function AuthForm() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState("");
-  const { currentUser, setCurrentUser } = useContext(AuthContext);
+  const { currentUser, setCurrentUser, csrfToken } = useContext(AuthContext);
 
   const handleSubmit = async () => {
     setMessage("");
 
     if (!username || !password) {
       setMessage("Cannot submit empty fields.");
+      return;
+    }
+
+    if (!csrfToken) {
+      setMessage("Security token is missing. Please refresh and try again.");
       return;
     }
 
@@ -30,7 +35,10 @@ export default function AuthForm() {
         await axios.post(
           "http://localhost:3000/register",
           { username, password },
-          { withCredentials: true },
+          {
+            withCredentials: true,
+            headers: { "x-csrf-token": csrfToken },
+          },
         );
 
         setMessage("Signup successful");
@@ -38,7 +46,10 @@ export default function AuthForm() {
         const response = await axios.post(
           "http://localhost:3000/login",
           { username, password },
-          { withCredentials: true },
+          {
+            withCredentials: true,
+            headers: { "x-csrf-token": csrfToken },
+          },
         );
 
         setUsername("");

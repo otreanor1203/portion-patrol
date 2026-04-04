@@ -4,7 +4,30 @@ export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
+  const [csrfToken, setCsrfToken] = useState("");
   const [loadingUser, setLoadingUser] = useState(true);
+
+  const refreshCsrfToken = async () => {
+    try {
+      const csrfResponse = await fetch("http://localhost:3000/csrf-token", {
+        method: "GET",
+        credentials: "include",
+      });
+
+      if (csrfResponse.ok) {
+        const csrfData = await csrfResponse.json();
+        const token = csrfData.csrfToken || "";
+        setCsrfToken(token);
+        return token;
+      }
+
+      setCsrfToken("");
+      return "";
+    } catch (error) {
+      setCsrfToken("");
+      return "";
+    }
+  };
 
   useEffect(() => {
     const myListener = async () => {
@@ -23,9 +46,12 @@ export const AuthProvider = ({ children }) => {
         } else {
           setCurrentUser(null);
         }
+
+        await refreshCsrfToken();
       } catch (error) {
         console.error("Error fetching current user:", error);
         setCurrentUser(null);
+        setCsrfToken("");
       } finally {
         setLoadingUser(false);
       }
@@ -43,7 +69,15 @@ export const AuthProvider = ({ children }) => {
   }
 
   return (
-    <AuthContext.Provider value={{ currentUser, setCurrentUser, loadingUser }}>
+    <AuthContext.Provider
+      value={{
+        currentUser,
+        setCurrentUser,
+        csrfToken,
+        refreshCsrfToken,
+        loadingUser,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

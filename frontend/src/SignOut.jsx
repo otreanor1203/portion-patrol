@@ -1,21 +1,34 @@
 import React, { useContext } from "react";
 import { AuthContext } from "./context/AuthContext.jsx";
-import { redirect } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const SignOutButton = () => {
-  const { setCurrentUser } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const { setCurrentUser, csrfToken, refreshCsrfToken } =
+    useContext(AuthContext);
 
   const doSignOut = async () => {
     try {
-      const response = await fetch(
-        "http://localhost:3000/signout",
-        {
-          method: "POST",
-          credentials: "include",
-        }
-      );
+      if (!csrfToken) {
+        console.error("CSRF token missing. Please refresh and try again.");
+        return;
+      }
+
+      const response = await fetch("http://localhost:3000/signout", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "x-csrf-token": csrfToken,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Sign out failed");
+      }
+
       setCurrentUser(null);
-      redirect("/");
+      await refreshCsrfToken();
+      navigate("/");
     } catch (error) {
       console.error("Error signing out:", error);
     }
