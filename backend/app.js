@@ -2,6 +2,7 @@ import express from "express";
 import session from "express-session";
 import configRoutesFunction from "./routes/index.js";
 import cors from "cors";
+import { csrf } from "lusca";
 
 const app = express();
 app.use(express.json());
@@ -21,6 +22,8 @@ app.use(
     resave: false,
   }),
 );
+
+app.use(csrf());
 
 app.use(async (req, res, next) => {
   let auth = "";
