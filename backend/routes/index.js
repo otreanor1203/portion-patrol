@@ -2,9 +2,17 @@ import { checkUsername, checkPassword } from "../helpers.js";
 import users from "../data/users.js";
 import userRoutes from "./users.js";
 import chipotleRoutes from "./chipotles.js";
+import rateLimit from "express-rate-limit";
+
+const loginAndRegisterLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 login/register requests per windowMs
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
 const constructorMethod = (app) => {
-  app.post("/login", async (req, res) => {
+  app.post("/login", loginAndRegisterLimiter, async (req, res) => {
     let { username, password } = req.body;
 
     try {
@@ -14,6 +22,7 @@ const constructorMethod = (app) => {
       let user = await users.login(username, password);
 
       req.session.user = user;
+      console.log(req.session.user);
 
       return res.json({ loggedIn: "yes" });
     } catch (e) {
@@ -23,7 +32,7 @@ const constructorMethod = (app) => {
     }
   });
 
-  app.post("/register", async (req, res) => {
+  app.post("/register", loginAndRegisterLimiter, async (req, res) => {
     let { username, password } = req.body;
     try {
       username = checkUsername(username, "POST /register");
@@ -36,6 +45,11 @@ const constructorMethod = (app) => {
         error: e.error || "Registration failed",
       });
     }
+  });
+
+  app.post("/signout", async (req, res) => {
+    req.session.destroy();
+    return res.json({ loggedIn: "no" });
   });
 
   app.use("/users", userRoutes);

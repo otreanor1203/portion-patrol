@@ -1,23 +1,29 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navbar from "./Navbar";
-import Login from "./Login";
-import Signup from "./Signup";
 import ChipotleList from "./ChipotleList";
 import Account from "./Account.jsx";
 import Favorites from "./Favorites.jsx";
+import PrivateRoute from "./PrivateRoute.jsx";
+import Login from "./Login";
+import Signup from "./Signup";
+import { AuthProvider } from "./context/AuthContext.jsx";
 
 function App() {
   return (
-    <BrowserRouter>
-      <Navbar />
-      <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/find-chipotle" element={<ChipotleList />} />
-        <Route path="/account" element={<Account />} />
-        <Route path="/favorites" element={<Favorites />} />
-      </Routes>
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/account" element={<Account />} />
+          <Route element={<PrivateRoute />}>
+            <Route path="/find-chipotle" element={<ChipotleList />} />
+            <Route path="/favorites" element={<Favorites />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 
