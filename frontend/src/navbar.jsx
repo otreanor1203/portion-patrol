@@ -1,11 +1,21 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import "./Navbar.css";
 import { MdAccountCircle } from "react-icons/md";
 
-//TODO: Permissions, Favorites, Account
 function Navbar() {
+  const location = useLocation();
+
+  const isAuthPage = location.pathname === "/" || location.pathname === "/signup";
+
   return (
     <nav className="navbar">
+      {isAuthPage ? (
+        <div className="nav-left">
+          <Link to="/" className="nav-link">Login</Link>
+          <Link to="/signup" className="nav-link">Signup</Link>
+        </div>
+      ) : (
+        <>
       <div className="nav-left">
         <Link to="/" className="nav-link">Home</Link>
         <Link to="/find-chipotle" className="nav-link">Find My Chipotle</Link>
@@ -17,6 +27,8 @@ function Navbar() {
         <MdAccountCircle size={28} color="white" />
         </Link>
     </div>
+        </>
+      )}
     </nav>
   );
 }
