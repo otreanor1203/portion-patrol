@@ -6,6 +6,7 @@ import Favorites from "./Favorites.jsx";
 import PrivateRoute from "./PrivateRoute.jsx";
 import Login from "./Login";
 import Signup from "./Signup";
+import Chipotle from "./Chipotle";
 import { AuthProvider } from "./context/AuthContext.jsx";
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
           <Route path="/account" element={<Account />} />
           <Route path="/find-chipotle" element={<ChipotleList />} />
           <Route path="/favorites" element={<Favorites />} />
+          <Route path="/chipotle/:id" element={<Chipotle />} />
           {/* </Route> */}
         </Routes>
       </BrowserRouter>
