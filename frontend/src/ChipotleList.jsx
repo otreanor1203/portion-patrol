@@ -23,7 +23,7 @@ function ChipotleList() {
   }, []);
 
   const filteredChipotles = chipotles.filter((chip) =>
-    chip.location.toLowerCase().includes(search.toLowerCase())
+    chip.address.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
@@ -32,7 +32,7 @@ function ChipotleList() {
 
       <input
         type="text"
-        placeholder="Search by city"
+        placeholder="Search by address/city"
         value={search}
         onChange={(e) => setSearch(e.target.value.trimStart())}
       />
@@ -45,7 +45,6 @@ function ChipotleList() {
         <p>No locations found</p>
       ) : (
         <ul className="chipotle-list">
-            {/* Slicing for now for display just making sure it works */}
           {filteredChipotles.slice(0,2).map((chip) => (
             <li key={chip._id} className="chipotle-card">
               <h3>{chip.location}</h3>
