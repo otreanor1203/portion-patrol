@@ -1,6 +1,9 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom"; 
+import "./App.css";
+import { useContext } from "react";
+import { AuthContext } from "./context/AuthContext.jsx";
 
 export default function Login({ onLoginSuccess }) {
   const navigate = useNavigate(); 
@@ -8,6 +11,8 @@ export default function Login({ onLoginSuccess }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
+  const { currentUser, setCurrentUser, csrfToken } = useContext(AuthContext);
+
 
   const handleLogin = async () => {
     setMessage("");
@@ -17,11 +22,18 @@ export default function Login({ onLoginSuccess }) {
       return;
     }
 
+    if (!csrfToken) {
+      setMessage("Security token is missing. Please refresh and try again.");
+      return;
+    }
+
     try {
       await axios.post(
         "http://localhost:3000/login",
         { username, password },
-        { withCredentials: true }
+        { withCredentials: true,
+          headers: { "x-csrf-token": csrfToken }
+        }
       );
 
       setMessage("Login successful");

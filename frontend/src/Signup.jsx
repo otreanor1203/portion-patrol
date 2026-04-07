@@ -1,17 +1,27 @@
 import { useState } from "react";
 import axios from "axios";
+import "./App.css";
+import { useContext } from "react";
+import { AuthContext } from "./context/AuthContext.jsx";
 
-export default function Signup({ onSignupSuccess }) {
+export default function Signup({ }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState("");
+  const { currentUser, setCurrentUser, csrfToken } = useContext(AuthContext);
+
 
   const handleSignup = async () => {
     setMessage("");
 
     if (!username || !password) {
       setMessage("Cannot submit empty fields.");
+      return;
+    }
+
+    if (!csrfToken) {
+      setMessage("Security token is missing. Please refresh and try again.");
       return;
     }
 
@@ -24,11 +34,13 @@ export default function Signup({ onSignupSuccess }) {
       await axios.post(
         "http://localhost:3000/register",
         { username, password },
-        { withCredentials: true }
+        { 
+          withCredentials: true,
+          headers: { "x-csrf-token": csrfToken }
+        }
       );
 
       setMessage("Signup successful");
-      onSignupSuccess?.();
     } catch (e) {
       setMessage(e.response?.data?.error || "Signup failed");
     }
