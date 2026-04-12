@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import "./App.css";
 import { useContext } from "react";
 import { AuthContext } from "./context/AuthContext.jsx";
+import { Navigate } from "react-router-dom";
+
 
 export default function Login({ onLoginSuccess }) {
   const navigate = useNavigate(); 
@@ -28,13 +30,29 @@ export default function Login({ onLoginSuccess }) {
     }
 
     try {
-      await axios.post(
+      const loginResponse = await axios.post(
         "http://localhost:3000/login",
         { username, password },
         { withCredentials: true,
           headers: { "x-csrf-token": csrfToken }
         }
       );
+
+      const responseUser = loginResponse?.data?.user;
+      if (responseUser && responseUser._id) {
+        setCurrentUser(responseUser);
+      } else {
+        const sessionResponse = await axios.get("http://localhost:3000/getSession", {
+          withCredentials: true,
+        });
+
+        if (sessionResponse?.data?._id) {
+          setCurrentUser(sessionResponse.data);
+        } else {
+          setMessage("Login succeeded, but user session could not be loaded.");
+          return;
+        }
+      }
 
       setMessage("Login successful");
       onLoginSuccess?.();
@@ -44,6 +62,10 @@ export default function Login({ onLoginSuccess }) {
       setMessage(e.response?.data?.error || "Login failed");
     }
   };
+
+    if (currentUser) {
+      return <Navigate to="/account" />;
+    }
 
   return (
     <div className="container">

@@ -16,11 +16,11 @@ function App() {
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
-          {/* <Route element={<PrivateRoute />}> */}
-          <Route path="/account" element={<Account />} />
-          <Route path="/find-chipotle" element={<ChipotleList />} />
-          <Route path="/favorites" element={<Favorites />} />
-          {/* </Route> */}
+          <Route element={<PrivateRoute />}>
+            <Route path="/account" element={<Account />} />
+            <Route path="/find-chipotle" element={<ChipotleList />} />
+            <Route path="/favorites" element={<Favorites />} />
+          </Route>
         </Routes>
       </BrowserRouter>
     </AuthProvider>
