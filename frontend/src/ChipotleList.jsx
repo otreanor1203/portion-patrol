@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import "./App.css";
+import { FaThumbsUp, FaThumbsDown } from "react-icons/fa";
 
 function ChipotleList() {
   const [chipotles, setChipotles] = useState([]);
@@ -51,6 +52,8 @@ function ChipotleList() {
               <p>{chip.address}</p>
               <p>{chip.state}</p>
               <p>Rating: {chip.rating || "N/A"}</p>
+              <p><FaThumbsUp /> {chip.likes} </p>
+              <p><FaThumbsDown /> {chip.dislikes} </p>
             </li>
           ))}
         </ul>
