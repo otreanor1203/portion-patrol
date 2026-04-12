@@ -5,8 +5,8 @@ import chipotleRoutes from "./chipotles.js";
 import rateLimit from "express-rate-limit";
 
 const loginAndRegisterLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 login/register requests per windowMs
+  windowMs: 15 * 60 * 1000,
+  max: 100,
   standardHeaders: true,
   legacyHeaders: false,
 });
@@ -24,7 +24,7 @@ const constructorMethod = (app) => {
       req.session.user = user;
       console.log(req.session.user);
 
-      return res.json({ loggedIn: "yes" });
+      return res.json({ loggedIn: "yes", user });
     } catch (e) {
       return res.status(e.status || 500).json({
         error: e.error || "Login failed",
