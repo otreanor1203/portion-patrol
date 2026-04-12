@@ -36,6 +36,11 @@ function Navbar() {
             <Link to="/favorites" className="nav-link">
               Favorites
             </Link>
+            {currentUser?.admin && (
+              <Link to="/requests" className="nav-link">
+                Requests
+              </Link>
+            )}
           </div>
 
           <div className="nav-right">

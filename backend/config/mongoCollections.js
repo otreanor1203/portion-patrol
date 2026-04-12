@@ -14,3 +14,4 @@ const getCollectionFunction = (collection) => {
 
 export const users = getCollectionFunction("users");
 export const chipotles = getCollectionFunction("chipotles");
+export const requests = getCollectionFunction("requests");

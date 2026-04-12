@@ -2,6 +2,7 @@ import { checkUsername, checkPassword } from "../helpers.js";
 import users from "../data/users.js";
 import userRoutes from "./users.js";
 import chipotleRoutes from "./chipotles.js";
+import requestRoutes from "./requests.js";
 import rateLimit from "express-rate-limit";
 
 const loginAndRegisterLimiter = rateLimit({
@@ -54,6 +55,7 @@ const constructorMethod = (app) => {
 
   app.use("/users", userRoutes);
   app.use("/chipotles", chipotleRoutes);
+  app.use("/requests", requestRoutes);
     app.use("*", (req, res) => {
       res.status(404).json({ error: "Route Not found" });
     });

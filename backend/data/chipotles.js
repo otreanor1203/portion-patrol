@@ -4,7 +4,7 @@ import { users } from "../config/mongoCollections.js";
 import { checkId } from "../helpers.js";
 
 const exportedMethods = {
-  async createChipotle(state, location, address, latitude, longitude) {
+  async createChipotle(state, location, address) {
     if (typeof state !== "string") {
       throw new Error("State must be a string");
     }
@@ -17,22 +17,12 @@ const exportedMethods = {
       throw new Error("Address must be a string");
     }
 
-    if (typeof latitude !== "number") {
-      throw new Error("Latitude must be a number");
-    }
-
-    if (typeof longitude !== "number") {
-      throw new Error("Longitude must be a number");
-    }
-
     const chipotleCollection = await chipotles();
 
     const newChipotle = {
       state,
       location,
       address,
-      latitude,
-      longitude,
       ratings: [],
       likes: 0,
       dislikes: 0,
