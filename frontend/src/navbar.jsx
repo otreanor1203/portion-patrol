@@ -36,6 +36,9 @@ function Navbar() {
             <Link to="/favorites" className="nav-link">
               Favorites
             </Link>
+            <Link to="/add-chipotle" className="nav-link">
+              Add Chipotle
+            </Link>
             {currentUser?.admin && (
               <Link to="/requests" className="nav-link">
                 Requests
