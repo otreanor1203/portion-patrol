@@ -7,13 +7,6 @@ function ChipotleList() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
 
-  // const handleAccept = (id, state, location, address) => {
-  //   try {
-  //     await fetch
-  //   }
-
-  // };
-
   useEffect(() => {
     const fetchChipotles = async () => {
       try {

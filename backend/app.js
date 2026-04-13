@@ -55,10 +55,8 @@ app.get("/csrf-token", (req, res) => {
 
 app.use("/getSession", async (req, res, next) => {
   if (req.session.user) {
-    console.log("Yes");
     return res.json(req.session.user);
   } else {
-    console.log("No");
     return res.json({ user: null });
   }
 });

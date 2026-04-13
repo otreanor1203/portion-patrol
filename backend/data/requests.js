@@ -1,5 +1,6 @@
 import { requests } from "../config/mongoCollections.js";
 import { checkId } from "../helpers.js";
+import { ObjectId } from "mongodb";
 
 const exportedMethods = {
   async addRequest(userId, state, location, address) {
@@ -48,15 +49,20 @@ const exportedMethods = {
   },
 
   async deleteRequest(requestId) {
-    if (typeof requestId !== "string") {
-      throw {
-        status: 400,
-        function: "deleteRequest",
-        error: "Request ID must be a string.",
-      };
+    try {
+      requestId = checkId(requestId, "deleteRequest", "Request ID");
+    } catch (e) {
+      throw e;
     }
     const requestsCollection = await requests();
-    const result = await requestsCollection.deleteOne({ _id: requestId });
+    const result = await requestsCollection.deleteOne({ _id: new ObjectId(requestId) });
+  if (!result.acknowledged) {
+    throw {
+      status: 500,
+      function: "deleteRequest",
+      error: "Could not delete request.",
+    };
+  }
     return result;
   },
 

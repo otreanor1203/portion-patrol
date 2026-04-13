@@ -22,9 +22,9 @@ router.get("/:chipotleId", async (req, res) => {
 });
 
 router.post("/", async (req, res) => {
-  let { state, location, address } = req.body;
+  let { id, state, location, address } = req.body;
     try {
-        const newChipotle = await chipotleData.createChipotle(state, location, address);
+        const newChipotle = await chipotleData.createChipotle(id, state, location, address);
         return res.json(newChipotle);
     } catch (e) {
         return res.status(e.status).json({ error: e.error });
