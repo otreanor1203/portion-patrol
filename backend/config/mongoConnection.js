@@ -4,7 +4,7 @@ let _connection = undefined;
 let _database = undefined;
 
 const mongoConfig = {
-  serverUrl: "mongodb://localhost:27017/",
+  serverUrl: process.env.MONGO_URI || "mongodb://localhost:27017/",
   database: "portion-patrol",
 };
 

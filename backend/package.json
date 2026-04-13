@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node app.js",
-    "seed": "node ./tasks/seed.js",
+    "seed": "node ./tasks/script.js",
     "test": "node ./tasks/test.js"
   },
   "keywords": [],

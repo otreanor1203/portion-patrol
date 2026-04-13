@@ -1,12 +1,12 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Navbar from "./Navbar";
-import ChipotleList from "./ChipotleList";
+import Navbar from "./navbar.jsx";
+import ChipotleList from "./ChipotleList.jsx";
 import Account from "./Account.jsx";
 import Favorites from "./Favorites.jsx";
 import PrivateRoute from "./PrivateRoute.jsx";
-import Login from "./Login";
-import Signup from "./Signup";
-import Chipotle from "./Chipotle";
+import Login from "./Login.jsx";
+import Signup from "./Signup.jsx";
+import Chipotle from "./Chipotle.jsx";
 import { AuthProvider } from "./context/AuthContext.jsx";
 import Requests from "./Requests.jsx";
 import AddChipotleForm from "./AddChipotleForm.jsx";
