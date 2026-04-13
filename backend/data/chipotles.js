@@ -1,10 +1,17 @@
 import { ObjectId } from "mongodb";
 import { chipotles } from "../config/mongoCollections.js";
+import { requests } from "../config/mongoCollections.js";
 import { users } from "../config/mongoCollections.js";
 import { checkId } from "../helpers.js";
 
 const exportedMethods = {
-  async createChipotle(state, location, address, latitude, longitude) {
+  async createChipotle(requestId, state, location, address) {
+    try{
+      requestId = checkId(requestId, "createChipotle", "Request ID");
+    } catch (e) {
+      throw e;
+    }
+
     if (typeof state !== "string") {
       throw new Error("State must be a string");
     }
@@ -17,22 +24,12 @@ const exportedMethods = {
       throw new Error("Address must be a string");
     }
 
-    if (typeof latitude !== "number") {
-      throw new Error("Latitude must be a number");
-    }
-
-    if (typeof longitude !== "number") {
-      throw new Error("Longitude must be a number");
-    }
-
     const chipotleCollection = await chipotles();
 
     const newChipotle = {
       state,
       location,
       address,
-      latitude,
-      longitude,
       ratings: [],
       likes: 0,
       dislikes: 0,
@@ -52,6 +49,17 @@ const exportedMethods = {
     const newId = insertInfo.insertedId.toString();
 
     newChipotle._id = newId;
+
+    const requestCollection = await requests();
+    const deleteInfo = await requestCollection.deleteOne({ _id: new ObjectId(requestId) });
+
+    if (!deleteInfo.acknowledged) {
+      throw {
+        status: 500,
+        function: "createChipotle",
+        error: "Chipotle added but could not delete request.",
+      };
+    }
 
     return newChipotle;
   },

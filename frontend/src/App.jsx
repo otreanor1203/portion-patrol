@@ -8,6 +8,8 @@ import Login from "./Login";
 import Signup from "./Signup";
 import Chipotle from "./Chipotle";
 import { AuthProvider } from "./context/AuthContext.jsx";
+import Requests from "./Requests.jsx";
+import AddChipotleForm from "./AddChipotleForm.jsx";
 
 function App() {
   return (
@@ -22,6 +24,8 @@ function App() {
             <Route path="/find-chipotle" element={<ChipotleList />} />
             <Route path="/favorites" element={<Favorites />} />
             <Route path="/chipotle/:id" element={<Chipotle />} />
+            <Route path="/requests" element={<Requests />} />
+            <Route path="/add-chipotle" element={<AddChipotleForm />} />
           </Route>
         </Routes>
       </BrowserRouter>
