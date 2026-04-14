@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 import { FaThumbsUp, FaThumbsDown } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 function ChipotleList() {
   const [chipotles, setChipotles] = useState([]);
@@ -24,7 +25,7 @@ function ChipotleList() {
   }, []);
 
   const filteredChipotles = chipotles.filter((chip) =>
-    chip.address.toLowerCase().includes(search.toLowerCase()),
+    chip.address.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
@@ -48,16 +49,18 @@ function ChipotleList() {
         <ul className="chipotle-list">
           {filteredChipotles.slice(0, 2).map((chip) => (
             <li key={chip._id} className="chipotle-card">
-              <h3>{chip.location}</h3>
-              <p>{chip.address}</p>
-              <p>{chip.state}</p>
-              <p>Rating: {chip.rating || "N/A"}</p>
-              <p>
-                <FaThumbsUp /> {chip.likes}{" "}
-              </p>
-              <p>
-                <FaThumbsDown /> {chip.dislikes}{" "}
-              </p>
+              <Link to={`/chipotle/${chip._id}`}>
+                <h3>{chip.location}</h3>
+                <p>{chip.address}</p>
+                <p>{chip.state}</p>
+                <p>Rating: {chip.rating || "N/A"}</p>
+                <p>
+                  <FaThumbsUp /> {chip.likes}
+                </p>
+                <p>
+                  <FaThumbsDown /> {chip.dislikes}
+                </p>
+              </Link>
             </li>
           ))}
         </ul>
