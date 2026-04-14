@@ -1,7 +1,14 @@
-import fs from "fs";
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { chipotles } from "../config/mongoCollections.js";
+import { closeConnection } from "../config/mongoConnection.js";
 
-const csv = fs.readFileSync("chipotle_stores.csv", "utf8");
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const csvPath = path.join(__dirname, "chipotle_stores.csv");
+
+const csv = fs.readFileSync(csvPath, "utf8");
 
 const lines = csv.trim().split("\n");
 const headers = lines[0].split(",");
@@ -23,23 +30,24 @@ const parsedData = lines.slice(1).map((line) => {
   return obj;
 });
 
-const chipotleCollection = await chipotles();
+try {
+  const chipotleCollection = await chipotles();
 
-for (let i = 0; i < parsedData.length; i++) {
+  for (let i = 0; i < parsedData.length; i++) {
     parsedData[i].ratings = [];
     parsedData[i].likes = 0;
     parsedData[i].dislikes = 0;
     parsedData[i].overallRating = "N/A";
+  }
+
+  await chipotleCollection.deleteMany({});
+  const insertInfo = await chipotleCollection.insertMany(parsedData);
+
+  if (!insertInfo.acknowledged) {
+    throw new Error("Could not add chipotles.");
+  }
+
+  console.log(`Chipotles successfully seeded.`);
+} finally {
+  await closeConnection();
 }
-
-const insertInfo = await chipotleCollection.insertMany(parsedData);
-
-if (!insertInfo.acknowledged) {
-  throw {
-    status: 500,
-    function: "createUser",
-    error: "Could not add chipotles.",
-  };
-}
-
-process.exit(0);

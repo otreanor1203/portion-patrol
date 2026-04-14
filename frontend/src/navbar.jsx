@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import "./Navbar.css";
+import "./navbar.css";
 import { MdAccountCircle } from "react-icons/md";
 import { useContext } from "react";
 import { AuthContext } from "./context/AuthContext.jsx";
