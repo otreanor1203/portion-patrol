@@ -144,8 +144,13 @@ const exportedMethods = {
       };
     }
 
+    const user__ = await userCollection.findOne({
+      _id: new ObjectId(userId),
+    });
+    
     const newRating = {
       userId,
+      username: user__.username,
       rating,
       comment,
     };
