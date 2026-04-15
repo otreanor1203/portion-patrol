@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node app.js",
+    "start:seed": "npm run seed && npm start",
     "seed": "node ./tasks/script.js",
     "test": "node ./tasks/test.js"
   },
