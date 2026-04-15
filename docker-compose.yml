@@ -6,6 +6,12 @@ services:
       - "27017:27017"
     volumes:
       - mongodb_data:/data/db
+    healthcheck:
+      test:
+        ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   backend:
     build: ./backend
@@ -15,7 +21,9 @@ services:
     environment:
       - MONGO_URI=mongodb://mongodb:27017/portion-patrol
     depends_on:
-      - mongodb
+      mongodb:
+        condition: service_healthy
+    command: npm run start:seed
 
   frontend:
     build: ./frontend
