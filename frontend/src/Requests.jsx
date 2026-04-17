@@ -1,6 +1,7 @@
 import "./App.css";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "./context/AuthContext.jsx";
+import { apiUrl } from "./api.js";
 
 export default function Requests() {
   const [loading, setLoading] = useState(true);
@@ -13,7 +14,7 @@ export default function Requests() {
 
   const handleAccept = async (id, state, location, address) => {
     try {
-      const response = await fetch("http://localhost:3000/chipotles", {
+      const response = await fetch(apiUrl("/chipotles"), {
         method: "POST",
         credentials: "include",
         headers: {
@@ -37,7 +38,7 @@ export default function Requests() {
 
   const handleDecline = async (id) => {
     try {
-      const response = await fetch("http://localhost:3000/requests/" + id, {
+      const response = await fetch(apiUrl("/requests/" + id), {
         method: "DELETE",
         credentials: "include",
         headers: {
@@ -66,7 +67,7 @@ export default function Requests() {
           return;
         }
 
-        const response = await fetch("http://localhost:3000/requests", {
+        const response = await fetch(apiUrl("/requests"), {
           method: "GET",
           credentials: "include",
           headers: { "x-csrf-token": csrfToken },

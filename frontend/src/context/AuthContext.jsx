@@ -1,4 +1,5 @@
 import { useState, useEffect, createContext } from "react";
+import { apiUrl } from "../api.js";
 
 export const AuthContext = createContext();
 
@@ -9,7 +10,7 @@ export const AuthProvider = ({ children }) => {
 
   const refreshCsrfToken = async () => {
     try {
-      const csrfResponse = await fetch("http://localhost:3000/csrf-token", {
+      const csrfResponse = await fetch(apiUrl("/csrf-token"), {
         method: "GET",
         credentials: "include",
       });
@@ -32,7 +33,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const myListener = async () => {
       try {
-        const response = await fetch("http://localhost:3000/getSession", {
+        const response = await fetch(apiUrl("/getSession"), {
           method: "GET",
           credentials: "include",
         });
