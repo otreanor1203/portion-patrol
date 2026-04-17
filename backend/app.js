@@ -9,14 +9,24 @@ app.use(express.json());
 const { csrf } = pkg;
 const isProduction = process.env.NODE_ENV === "production";
 const PORT = Number(process.env.PORT) || 3000;
-const CORS_ORIGIN = process.env.CORS_ORIGIN || "http://localhost:5173";
+const CORS_ORIGINS = (process.env.CORS_ORIGIN || "http://localhost:5173")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
 const SESSION_SECRET = process.env.SESSION_SECRET || "demo-session-secret";
 
 app.set("trust proxy", 1);
 
 app.use(
   cors({
-    origin: CORS_ORIGIN,
+    origin: (origin, callback) => {
+      // Allow non-browser clients and configured browser origins.
+      if (!origin || CORS_ORIGINS.includes(origin)) {
+        callback(null, true);
+        return;
+      }
+      callback(new Error("Not allowed by CORS"));
+    },
     credentials: true,
   }),
 );
