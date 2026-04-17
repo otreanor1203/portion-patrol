@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import "./App.css";
 import { FaThumbsUp, FaThumbsDown } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { apiUrl } from "./api.js";
 
 function ChipotleList() {
   const [chipotles, setChipotles] = useState([]);
@@ -11,7 +12,7 @@ function ChipotleList() {
   useEffect(() => {
     const fetchChipotles = async () => {
       try {
-        const res = await fetch("http://localhost:3000/chipotles");
+        const res = await fetch(apiUrl("/chipotles"));
         const data = await res.json();
         setChipotles(data);
       } catch (e) {

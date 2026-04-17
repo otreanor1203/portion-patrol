@@ -3,6 +3,7 @@ import { useContext, useState } from "react";
 import axios from "axios";
 import { AuthContext } from "./context/AuthContext.jsx";
 import { Navigate } from "react-router-dom";
+import { apiUrl } from "./api.js";
 
 const US_STATES = [
   "Alabama",
@@ -68,7 +69,7 @@ export default function AddChipotleForm() {
 
     try {
       await axios.post(
-        "http://localhost:3000/requests",
+        apiUrl("/requests"),
         {
           state: state,
           location: city,

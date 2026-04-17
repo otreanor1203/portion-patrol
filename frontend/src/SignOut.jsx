@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import { AuthContext } from "./context/AuthContext.jsx";
 import { useNavigate } from "react-router-dom";
+import { apiUrl } from "./api.js";
 
 const SignOutButton = () => {
   const navigate = useNavigate();
@@ -14,7 +15,7 @@ const SignOutButton = () => {
         return;
       }
 
-      const response = await fetch("http://localhost:3000/signout", {
+      const response = await fetch(apiUrl("/signout"), {
         method: "POST",
         credentials: "include",
         headers: {
