@@ -4,12 +4,10 @@
 
 body {
   margin: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
+  min-height: 100vh;
   background-color: #836953;
   font-family: Arial, sans-serif;
+  display: block;
 }
 
 .container {
@@ -19,6 +17,7 @@ body {
   background: #42342A;
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-top: 40px;
 }
 
 h1 {

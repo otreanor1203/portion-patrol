@@ -6,9 +6,13 @@ import pkg from "lusca";
 
 const app = express();
 app.use(express.json());
+
 const { csrf } = pkg;
+const csrfProtection = csrf();
+
 const isProduction = process.env.NODE_ENV === "production";
 const PORT = Number(process.env.PORT) || 3000;
+
 const DEFAULT_CORS_ORIGINS = [
   "http://localhost:5173",
   "http://127.0.0.1:5173",
@@ -17,10 +21,12 @@ const DEFAULT_CORS_ORIGINS = [
   "http://localhost",
   "http://127.0.0.1",
 ];
+
 const CORS_ORIGINS = (process.env.CORS_ORIGIN || DEFAULT_CORS_ORIGINS.join(","))
   .split(",")
   .map((origin) => origin.trim())
   .filter(Boolean);
+
 const SESSION_SECRET = process.env.SESSION_SECRET || "demo-session-secret";
 
 app.set("trust proxy", 1);
@@ -35,7 +41,7 @@ app.use(
       callback(new Error("Not allowed by CORS"));
     },
     credentials: true,
-  }),
+  })
 );
 
 app.use(
@@ -50,21 +56,19 @@ app.use(
       sameSite: isProduction ? "none" : "lax",
       maxAge: 1000 * 60 * 60 * 24 * 7,
     },
-  }),
+  })
 );
 
-app.use(csrf());
 
 app.use(async (req, res, next) => {
   let auth = "";
   if (req.session.user) {
     if (req.session.user.admin) auth = "(Authenticated Admin)";
-    else {
-      auth = "(Authenticated User)";
-    }
+    else auth = "(Authenticated User)";
   } else {
     auth = "(Non-Authenticated)";
   }
+
   console.log(
     "[" +
       new Date().toUTCString() +
@@ -73,16 +77,17 @@ app.use(async (req, res, next) => {
       " " +
       req.path +
       " " +
-      auth,
+      auth
   );
+
   next();
 });
 
-app.get("/csrf-token", (req, res) => {
+app.get("/csrf-token", csrfProtection, (req, res) => {
   return res.json({ csrfToken: req.csrfToken() });
 });
 
-app.use("/getSession", async (req, res, next) => {
+app.use("/getSession", async (req, res) => {
   if (req.session.user) {
     return res.json(req.session.user);
   } else {

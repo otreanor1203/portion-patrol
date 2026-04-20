@@ -118,6 +118,28 @@ const exportedMethods = {
     return userList;
   },
 
+  async getUserById(userId) {
+    userId = checkId(userId, "getUserById");
+  
+    const userCollection = await users();
+  
+    const user = await userCollection.findOne({
+      _id: new ObjectId(userId),
+    });
+  
+    if (!user) {
+      throw {
+        status: 404,
+        function: "getUserById",
+        error: "User not found.",
+      };
+    }
+  
+    user._id = user._id.toString();
+  
+    return user;
+  },
+
   async getTakenUsernames() {
     let userList = await this.getAllUsers();
 
@@ -126,258 +148,191 @@ const exportedMethods = {
     return usernames;
   },
 
+  
   async likeChipotle(userId, chipotleId) {
     userId = checkId(userId, "likeChipotle");
     chipotleId = checkId(chipotleId, "likeChipotle");
-
+  
     const userCollection = await users();
     const chipotleCollection = await chipotles();
+  
     const user = await userCollection.findOne({ _id: new ObjectId(userId) });
-    const chipotle = await chipotleCollection.findOne({
-      _id: new ObjectId(chipotleId),
-    });
-
+    const chipotle = await chipotleCollection.findOne({ _id: new ObjectId(chipotleId) });
+  
     if (!user) {
-      throw {
-        status: 400,
-        function: "likeChipotle",
-        error: "User not found.",
-      };
+      throw { status: 400, function: "likeChipotle", error: "User not found." };
     }
-
+  
     if (!chipotle) {
-      throw {
-        status: 400,
-        function: "likeChipotle",
-        error: "Chipotle not found.",
-      };
+      throw { status: 400, function: "likeChipotle", error: "Chipotle not found." };
     }
-
-    if (user.likedChipotles && user.likedChipotles.includes(chipotleId)) {
-      throw {
-        status: 400,
-        function: "likeChipotle",
-        error: "User has already liked this chipotle.",
-      };
+  
+    const chipotleObjId = new ObjectId(chipotleId);
+  
+    const alreadyLiked = (user.likedChipotles || []).some(
+      (id) => id.toString() === chipotleId
+    );
+  
+    const alreadyDisliked = (user.dislikedChipotles || []).some(
+      (id) => id.toString() === chipotleId
+    );
+  
+    if (alreadyLiked) {
+      return { liked: "already" };
     }
-
-    if (user.dislikedChipotles && user.dislikedChipotles.includes(chipotleId)) {
-      throw {
-        status: 400,
-        function: "likeChipotle",
-        error: "User has already disliked this chipotle.",
-      };
+  
+    const update = {
+      $addToSet: { likedChipotles: chipotleObjId },
+    };
+  
+    if (alreadyDisliked) {
+      update.$pull = { dislikedChipotles: chipotleObjId };
     }
-
-    const updateInfo = await userCollection.updateOne(
+  
+    await userCollection.updateOne(
       { _id: new ObjectId(userId) },
-      { $push: { likedChipotles: chipotleId } },
+      update
     );
-
-
-    if (!updateInfo.acknowledged) {
-      throw {
-        status: 500,
-        function: "likeChipotle",
-        error: "Could not like chipotle.",
-      };
-    }
-    
-    const updateInfo2 = await chipotleCollection.updateOne(
+  
+    await chipotleCollection.updateOne(
       { _id: new ObjectId(chipotleId) },
-      { $inc: { likes: 1 } },
+      {
+        $inc: {
+          likes: 1,
+          ...(alreadyDisliked ? { dislikes: -1 } : {}),
+        },
+      }
     );
-
-    if (!updateInfo2.acknowledged) {
-      throw {
-        status: 500,
-        function: "likeChipotle",
-        error: "Could not update chipotle like count.",
-      };
-    }
-
+  
     return { liked: "yes" };
   },
-
   async unlikeChipotle(userId, chipotleId) {
     userId = checkId(userId, "unlikeChipotle");
     chipotleId = checkId(chipotleId, "unlikeChipotle");
-
+  
     const userCollection = await users();
-    const user = await userCollection.findOne({ _id: new ObjectId(userId) });
-
-    if (!user) {
-      throw {
-        status: 400,
-        function: "unlikeChipotle",
-        error: "User not found.",
-      };
-    }
-
-    if (!user.likedChipotles || !user.likedChipotles.includes(chipotleId)) {
-      throw {
-        status: 400,
-        function: "unlikeChipotle",
-        error: "User has not liked this chipotle.",
-      };
-    }
-
-    const updateInfo = await userCollection.updateOne(
-      { _id: new ObjectId(userId) },
-      { $pull: { likedChipotles: chipotleId } }
-    );
-
-    if (!updateInfo.acknowledged) {
-      throw {
-        status: 500,
-        function: "unlikeChipotle",
-        error: "Could not unlike chipotle.",
-      };
-    }
-
     const chipotleCollection = await chipotles();
-    const updateInfo2 = await chipotleCollection.updateOne(
-      { _id: new ObjectId(chipotleId) },
-      { $inc: { likes: -1 } },
-    );
-
-    if (!updateInfo2.acknowledged) {
-      throw {
-        status: 500,
-        function: "unlikeChipotle",
-        error: "Could not update chipotle like count.",
-      };
+  
+    const user = await userCollection.findOne({ _id: new ObjectId(userId) });
+  
+    if (!user) {
+      throw { status: 400, function: "unlikeChipotle", error: "User not found." };
     }
-
+  
+    const chipotleObjId = new ObjectId(chipotleId);
+  
+    const hasLiked = (user.likedChipotles || []).some(
+      (id) => id.toString() === chipotleId
+    );
+  
+    if (!hasLiked) {
+      return { liked: "already-none" };
+    }
+  
+    await userCollection.updateOne(
+      { _id: new ObjectId(userId) },
+      { $pull: { likedChipotles: chipotleObjId } }
+    );
+  
+    await chipotleCollection.updateOne(
+      { _id: new ObjectId(chipotleId) },
+      { $inc: { likes: -1 } }
+    );
+  
     return { liked: "no" };
   },
-
   async dislikeChipotle(userId, chipotleId) {
     userId = checkId(userId, "dislikeChipotle");
     chipotleId = checkId(chipotleId, "dislikeChipotle");
-
+  
     const userCollection = await users();
     const chipotleCollection = await chipotles();
+  
     const user = await userCollection.findOne({ _id: new ObjectId(userId) });
-    const chipotle = await chipotleCollection.findOne({
-      _id: new ObjectId(chipotleId),
-    });
-
+    const chipotle = await chipotleCollection.findOne({ _id: new ObjectId(chipotleId) });
+  
     if (!user) {
-      throw {
-        status: 400,
-        function: "dislikeChipotle",
-        error: "User not found.",
-      };
+      throw { status: 400, function: "dislikeChipotle", error: "User not found." };
     }
-
+  
     if (!chipotle) {
-      throw {
-        status: 400,
-        function: "dislikeChipotle",
-        error: "Chipotle not found.",
-      };
+      throw { status: 400, function: "dislikeChipotle", error: "Chipotle not found." };
     }
-
-    if (user.dislikedChipotles && user.dislikedChipotles.includes(chipotleId)) {
-      throw {
-        status: 400,
-        function: "dislikeChipotle",
-        error: "User has already disliked this chipotle.",
-      };
+  
+    const chipotleObjId = new ObjectId(chipotleId);
+  
+    const alreadyDisliked = (user.dislikedChipotles || []).some(
+      (id) => id.toString() === chipotleId
+    );
+  
+    const alreadyLiked = (user.likedChipotles || []).some(
+      (id) => id.toString() === chipotleId
+    );
+  
+    if (alreadyDisliked) {
+      return { disliked: "already" };
     }
-
-    if (user.likedChipotles && user.likedChipotles.includes(chipotleId)) {
-      throw {
-        status: 400,
-        function: "dislikeChipotle",
-        error: "User has already liked this chipotle.",
-      };
+  
+    const update = {
+      $addToSet: { dislikedChipotles: chipotleObjId },
+    };
+  
+    if (alreadyLiked) {
+      update.$pull = { likedChipotles: chipotleObjId };
     }
-
-    const updateInfo = await userCollection.updateOne(
+  
+    await userCollection.updateOne(
       { _id: new ObjectId(userId) },
-      { $push: { dislikedChipotles: chipotleId } },
+      update
     );
-
-
-    if (!updateInfo.acknowledged) {
-      throw {
-        status: 500,
-        function: "dislikeChipotle",
-        error: "Could not dislike chipotle.",
-      };
-    }
-
-    const updateInfo2 = await chipotleCollection.updateOne(
+  
+    await chipotleCollection.updateOne(
       { _id: new ObjectId(chipotleId) },
-      { $inc: { dislikes: 1 } },
+      {
+        $inc: {
+          dislikes: 1,
+          ...(alreadyLiked ? { likes: -1 } : {}),
+        },
+      }
     );
-
-    if (!updateInfo2.acknowledged) {
-      throw {
-        status: 500,
-        function: "dislikeChipotle",
-        error: "Could not update chipotle dislike count.",
-      };
-    }
-
-    return { liked: "yes" };
-
+  
+    return { disliked: "yes" };
   },
-
   async undislikeChipotle(userId, chipotleId) {
     userId = checkId(userId, "undislikeChipotle");
     chipotleId = checkId(chipotleId, "undislikeChipotle");
-
+  
     const userCollection = await users();
-    const user = await userCollection.findOne({ _id: new ObjectId(userId) });
-
-    if (!user) {
-      throw {
-        status: 400,
-        function: "undislikeChipotle",
-        error: "User not found.",
-      };
-    }
-
-    if (!user.dislikedChipotles || !user.dislikedChipotles.includes(chipotleId)) {
-      throw {
-        status: 400,
-        function: "undislikeChipotle",
-        error: "User has not disliked this chipotle.",
-      };
-    }
-
-    const updateInfo = await userCollection.updateOne(
-      { _id: new ObjectId(userId) },
-      { $pull: { dislikedChipotles: chipotleId } }
-    );
-
-    if (!updateInfo.acknowledged) {
-      throw {
-        status: 500,
-        function: "undislikeChipotle",
-        error: "Could not undislike chipotle.",
-      };
-    }
-
     const chipotleCollection = await chipotles();
-    const updateInfo2 = await chipotleCollection.updateOne(
-      { _id: new ObjectId(chipotleId) },
-      { $inc: { dislikes: -1 } },
-    );
-
-    if (!updateInfo2.acknowledged) {
-      throw {
-        status: 500,
-        function: "undislikeChipotle",
-        error: "Could not update chipotle dislike count.",
-      };
+  
+    const user = await userCollection.findOne({ _id: new ObjectId(userId) });
+  
+    if (!user) {
+      throw { status: 400, function: "undislikeChipotle", error: "User not found." };
     }
-
+  
+    const chipotleObjId = new ObjectId(chipotleId);
+  
+    const hasDisliked = (user.dislikedChipotles || []).some(
+      (id) => id.toString() === chipotleId
+    );
+  
+    if (!hasDisliked) {
+      return { disliked: "already-none" };
+    }
+  
+    await userCollection.updateOne(
+      { _id: new ObjectId(userId) },
+      { $pull: { dislikedChipotles: chipotleObjId } }
+    );
+  
+    await chipotleCollection.updateOne(
+      { _id: new ObjectId(chipotleId) },
+      { $inc: { dislikes: -1 } }
+    );
+  
     return { disliked: "no" };
-  },
+  }
 
 };
 

@@ -25,7 +25,10 @@ function ChipotleList() {
 
     const fetchChipotles = async () => {
       try {
-        const res = await fetch(apiUrl("/chipotles"));
+        const res = await fetch(apiUrl("/chipotles"), {
+          credentials: "include",
+        });
+    
         const data = await res.json();
         setChipotles(data);
       } catch (e) {
@@ -125,7 +128,7 @@ function ChipotleList() {
         <p>No locations found</p>
       ) : (
         <ul className="chipotle-list">
-          {filteredChipotles.slice(0, 2).map((chip) => (
+          {filteredChipotles.map((chip) => (
             <li key={chip._id} className="chipotle-card">
               <Link to={`/chipotle/${chip._id}`}>
                 <h3>{chip.location}</h3>

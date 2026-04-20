@@ -37,7 +37,7 @@ try {
     parsedData[i].ratings = [];
     parsedData[i].likes = 0;
     parsedData[i].dislikes = 0;
-    parsedData[i].overallRating = "N/A";
+    parsedData[i].overallRating = 0;
   }
 
   await chipotleCollection.deleteMany({});

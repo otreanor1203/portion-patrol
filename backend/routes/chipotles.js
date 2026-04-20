@@ -1,24 +1,76 @@
-import { chipotleData } from "../data/index.js";
+import { chipotleData, userData } from "../data/index.js";
 import { Router } from "express";
 const router = Router();
 
 router.get("/", async (req, res) => {
   try {
-    const chipotleList = await chipotleData.getAllChipotles();
-    return res.json(chipotleList);
+    const chipotles = await chipotleData.getAllChipotles();
+    const userId = req.session?.user?._id;
+
+    if (userId) {
+
+      console.log("heeere" + userId)
+      
+      const user = await userData.getUserById(userId);
+      const likedSet = new Set(
+        (user.likedChipotles || []).map(id => id.toString())
+      );
+      
+      const dislikedSet = new Set(
+        (user.dislikedChipotles || []).map(id => id.toString())
+      );
+
+      const withLikes = chipotles.map(chip => ({
+        ...chip,
+        userLiked: likedSet.has(chip._id.toString()),
+        userDisliked: dislikedSet.has(chip._id.toString()),
+      }));
+
+      console.log(withLikes[0])
+
+      return res.json(withLikes);
+    } 
+
+    return res.json(chipotles);
   } catch (e) {
-    return res.status(e.status).json({ error: e.error });
+    return res.status(e.status || 500).json({ error: e.error });
   }
 });
 
 router.get("/:chipotleId", async (req, res) => {
-  const id = req.params.chipotleId;
-    try {
-        const chipotle = await chipotleData.getChipotleById(id);
-        return res.json(chipotle);
-    } catch (e) {
-        return res.status(e.status).json({ error: e.error });
+  try {
+    const id = req.params.chipotleId;
+
+    const chipotle = await chipotleData.getChipotleById(id);
+
+    const userId = req.session?.user?._id;
+
+    if (userId) {
+      const user = await userData.getUserById(userId);
+
+      const likedSet = new Set(
+        (user.likedChipotles || []).map((x) => x.toString())
+      );
+
+      const dislikedSet = new Set(
+        (user.dislikedChipotles || []).map((x) => x.toString())
+      );
+
+      return res.json({
+        ...chipotle,
+        userLiked: likedSet.has(id),
+        userDisliked: dislikedSet.has(id),
+      });
     }
+
+    return res.json({
+      ...chipotle,
+      userLiked: false,
+      userDisliked: false,
+    });
+  } catch (e) {
+    return res.status(e.status || 500).json({ error: e.error });
+  }
 });
 
 router.post("/", async (req, res) => {

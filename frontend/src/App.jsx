@@ -1,7 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navbar from "./navbar.jsx";
 import ChipotleList from "./ChipotleList.jsx";
-import Account from "./Account.jsx";
 import Favorites from "./Favorites.jsx";
 import PrivateRoute from "./PrivateRoute.jsx";
 import Login from "./Login.jsx";
@@ -20,7 +19,6 @@ function App() {
           <Route path="/" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route element={<PrivateRoute />}>
-            <Route path="/account" element={<Account />} />
             <Route path="/find-chipotle" element={<ChipotleList />} />
             <Route path="/favorites" element={<Favorites />} />
             <Route path="/chipotle/:id" element={<Chipotle />} />
