@@ -25,7 +25,10 @@ function ChipotleList() {
 
     const fetchChipotles = async () => {
       try {
-        const res = await fetch(apiUrl("/chipotles"));
+        const res = await fetch(apiUrl("/chipotles"), {
+          credentials: "include",
+        });
+    
         const data = await res.json();
         setChipotles(data);
       } catch (e) {
