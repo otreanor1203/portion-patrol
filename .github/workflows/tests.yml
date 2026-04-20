@@ -2,9 +2,10 @@ name: Run Tests
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "adding-test-cases" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "adding-test-cases" ]
+  workflow_dispatch:
   
 jobs:
   test:
