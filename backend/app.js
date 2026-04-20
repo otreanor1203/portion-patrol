@@ -9,7 +9,15 @@ app.use(express.json());
 const { csrf } = pkg;
 const isProduction = process.env.NODE_ENV === "production";
 const PORT = Number(process.env.PORT) || 3000;
-const CORS_ORIGINS = (process.env.CORS_ORIGIN || "http://localhost:5173")
+const DEFAULT_CORS_ORIGINS = [
+  "http://localhost:5173",
+  "http://127.0.0.1:5173",
+  "http://localhost:80",
+  "http://127.0.0.1:80",
+  "http://localhost",
+  "http://127.0.0.1",
+];
+const CORS_ORIGINS = (process.env.CORS_ORIGIN || DEFAULT_CORS_ORIGINS.join(","))
   .split(",")
   .map((origin) => origin.trim())
   .filter(Boolean);
@@ -20,7 +28,6 @@ app.set("trust proxy", 1);
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow non-browser clients and configured browser origins.
       if (!origin || CORS_ORIGINS.includes(origin)) {
         callback(null, true);
         return;
