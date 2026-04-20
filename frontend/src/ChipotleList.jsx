@@ -54,8 +54,8 @@ function ChipotleList() {
     const chip = chipotles.find((c) => c._id === chipotleId);
     const isLiked = chip.userLiked;
     const url = isLiked
-      ? `http://localhost:3000/users/unlike/${chipotleId}`
-      : `http://localhost:3000/users/like/${chipotleId}`;
+      ? apiUrl(`/users/unlike/${chipotleId}`)
+      : apiUrl(`/users/like/${chipotleId}`);
 
     try {
       const res = await authPost(url);
@@ -83,8 +83,8 @@ function ChipotleList() {
     const chip = chipotles.find((c) => c._id === chipotleId);
     const isDisliked = chip.userDisliked;
     const url = isDisliked
-      ? `http://localhost:3000/users/undislike/${chipotleId}`
-      : `http://localhost:3000/users/dislike/${chipotleId}`;
+      ? apiUrl(`/users/undislike/${chipotleId}`)
+      : apiUrl(`/users/dislike/${chipotleId}`);
 
     try {
       const res = await authPost(url);
