@@ -118,6 +118,28 @@ const exportedMethods = {
     return userList;
   },
 
+  async getUserById(userId) {
+    userId = checkId(userId, "getUserById");
+  
+    const userCollection = await users();
+  
+    const user = await userCollection.findOne({
+      _id: new ObjectId(userId),
+    });
+  
+    if (!user) {
+      throw {
+        status: 404,
+        function: "getUserById",
+        error: "User not found.",
+      };
+    }
+  
+    user._id = user._id.toString();
+  
+    return user;
+  },
+
   async getTakenUsernames() {
     let userList = await this.getAllUsers();
 
@@ -171,7 +193,7 @@ const exportedMethods = {
 
     const updateInfo = await userCollection.updateOne(
       { _id: new ObjectId(userId) },
-      { $push: { likedChipotles: chipotleId } },
+      { $push: { likedChipotles: new ObjectId(chipotleId) } },
     );
 
 
@@ -224,7 +246,7 @@ const exportedMethods = {
 
     const updateInfo = await userCollection.updateOne(
       { _id: new ObjectId(userId) },
-      { $pull: { likedChipotles: chipotleId } }
+      { $pull: { likedChipotles: new ObjectId(chipotleId) } }
     );
 
     if (!updateInfo.acknowledged) {
@@ -297,7 +319,7 @@ const exportedMethods = {
 
     const updateInfo = await userCollection.updateOne(
       { _id: new ObjectId(userId) },
-      { $push: { dislikedChipotles: chipotleId } },
+      { $push: { dislikedChipotles: new ObjectId(chipotleId) } },
     );
 
 
@@ -351,7 +373,7 @@ const exportedMethods = {
 
     const updateInfo = await userCollection.updateOne(
       { _id: new ObjectId(userId) },
-      { $pull: { dislikedChipotles: chipotleId } }
+      { $pull: { dislikedChipotles: new ObjectId(chipotleId) } }
     );
 
     if (!updateInfo.acknowledged) {
