@@ -128,7 +128,7 @@ function ChipotleList() {
         <p>No locations found</p>
       ) : (
         <ul className="chipotle-list">
-          {filteredChipotles.slice(0, 2).map((chip) => (
+          {filteredChipotles.map((chip) => (
             <li key={chip._id} className="chipotle-card">
               <Link to={`/chipotle/${chip._id}`}>
                 <h3>{chip.location}</h3>
