@@ -6,6 +6,12 @@ services:
       - "27017:27017"
     volumes:
       - mongodb_data:/data/db
+    healthcheck:
+      test:
+        ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   backend:
     build: ./backend
@@ -14,14 +20,20 @@ services:
       - "3000:3000"
     environment:
       - MONGO_URI=mongodb://mongodb:27017/portion-patrol
+      - CORS_ORIGIN=${CORS_ORIGIN:-http://localhost:80}
     depends_on:
-      - mongodb
+      mongodb:
+        condition: service_healthy
+    command: npm run start:seed
 
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:3000}
     container_name: frontend
     ports:
-      - "5173:80"
+      - "80:80"
     depends_on:
       - backend
 

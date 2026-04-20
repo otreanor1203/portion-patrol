@@ -5,6 +5,7 @@ import "./App.css";
 import { useContext } from "react";
 import { AuthContext } from "./context/AuthContext.jsx";
 import { Navigate } from "react-router-dom";
+import { apiUrl } from "./api.js";
 
 export default function Login({ onLoginSuccess }) {
   const navigate = useNavigate(); 
@@ -30,7 +31,7 @@ export default function Login({ onLoginSuccess }) {
 
     try {
       const loginResponse = await axios.post(
-        "http://localhost:3000/login",
+        apiUrl("/login"),
         { username, password },
         { withCredentials: true,
           headers: { "x-csrf-token": csrfToken }
@@ -41,7 +42,7 @@ export default function Login({ onLoginSuccess }) {
       if (responseUser && responseUser._id) {
         setCurrentUser(responseUser);
       } else {
-        const sessionResponse = await axios.get("http://localhost:3000/getSession", {
+        const sessionResponse = await axios.get(apiUrl("/getSession"), {
           withCredentials: true,
         });
 

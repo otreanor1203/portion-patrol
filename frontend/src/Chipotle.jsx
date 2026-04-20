@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { FaThumbsUp, FaThumbsDown } from "react-icons/fa";
 import { FaStar } from "react-icons/fa6";
 import { CiMapPin } from "react-icons/ci";
+import { apiUrl } from "./api.js";
 
 function Chipotle() {
   const { id } = useParams();
@@ -17,7 +18,7 @@ function Chipotle() {
 
   useEffect(() => {
     const getCsrfToken = async () => {
-      const res = await fetch("http://localhost:3000/csrf-token", {
+      const res = await fetch(apiUrl("/csrf-token"), {
         credentials: "include",
       });
       const data = await res.json();
@@ -28,7 +29,7 @@ function Chipotle() {
 
   const fetchChipotle = async () => {
     try {
-      const res = await fetch(`http://localhost:3000/chipotles/${id}`, {
+      const res = await fetch(apiUrl(`/chipotles/${id}`), {
         credentials: "include",
       });
       const data = await res.json();
@@ -96,7 +97,7 @@ function Chipotle() {
     if (!rating || !comment) return;
     setSubmitting(true);
     try {
-      await fetch(`http://localhost:3000/chipotles/${id}/review`, {
+      await fetch(apiUrl(`/chipotles/${id}/review`), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

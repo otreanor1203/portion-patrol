@@ -7,10 +7,26 @@ import pkg from "lusca";
 const app = express();
 app.use(express.json());
 const { csrf } = pkg;
+const isProduction = process.env.NODE_ENV === "production";
+const PORT = Number(process.env.PORT) || 3000;
+const CORS_ORIGINS = (process.env.CORS_ORIGIN || "http://localhost:5173")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+const SESSION_SECRET = process.env.SESSION_SECRET || "demo-session-secret";
+
+app.set("trust proxy", 1);
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: (origin, callback) => {
+      // Allow non-browser clients and configured browser origins.
+      if (!origin || CORS_ORIGINS.includes(origin)) {
+        callback(null, true);
+        return;
+      }
+      callback(new Error("Not allowed by CORS"));
+    },
     credentials: true,
   }),
 );
@@ -18,9 +34,15 @@ app.use(
 app.use(
   session({
     name: "AuthenticationState",
-    secret: "some secret string!",
+    secret: SESSION_SECRET,
     saveUninitialized: false,
     resave: false,
+    cookie: {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: isProduction ? "none" : "lax",
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+    },
   }),
 );
 
@@ -68,7 +90,7 @@ app.use("/ping", async (req, res, next) => {
 
 configRoutesFunction(app);
 
-app.listen(3000, () => {
+app.listen(PORT, () => {
   console.log("We've now got a server!");
-  console.log("Your routes will be running on http://localhost:3000");
+  console.log(`Your routes will be running on http://localhost:${PORT}`);
 });

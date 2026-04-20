@@ -4,6 +4,7 @@ import "./App.css";
 import { useContext } from "react";
 import { AuthContext } from "./context/AuthContext.jsx";
 import { Navigate } from "react-router-dom";
+import { apiUrl } from "./api.js";
 
 export default function Signup({ }) {
   const [username, setUsername] = useState("");
@@ -33,7 +34,7 @@ export default function Signup({ }) {
 
     try {
       await axios.post(
-        "http://localhost:3000/register",
+        apiUrl("/register"),
         { username, password },
         { 
           withCredentials: true,
