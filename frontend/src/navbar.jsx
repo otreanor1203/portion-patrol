@@ -3,6 +3,7 @@ import "./navbar.css";
 import { MdAccountCircle } from "react-icons/md";
 import { useContext } from "react";
 import { AuthContext } from "./context/AuthContext.jsx";
+import SignOutButton from "./SignOut.jsx";
 
 function Navbar() {
   const { currentUser } = useContext(AuthContext);
@@ -47,9 +48,7 @@ function Navbar() {
           </div>
 
           <div className="nav-right">
-            <Link to="/account" className="account-icon">
-              <MdAccountCircle size={28} color="white" />
-            </Link>
+          <SignOutButton />
           </div>
         </>
       )}

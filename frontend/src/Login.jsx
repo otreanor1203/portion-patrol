@@ -64,7 +64,7 @@ export default function Login({ onLoginSuccess }) {
   };
 
     if (currentUser) {
-      return <Navigate to="/account" />;
+      return <Navigate to="/find-chipotle" />;
     }
 
   return (
