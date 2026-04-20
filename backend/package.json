@@ -7,7 +7,8 @@
     "start": "node app.js",
     "start:seed": "npm run seed && npm start",
     "seed": "node ./tasks/script.js",
-    "test": "node ./tasks/test.js"
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "keywords": [],
   "author": "Owen Treanor & Jimmy Colgan",
@@ -22,5 +23,8 @@
     "mongodb": "^6.15.0",
     "lusca": "^1.7.0",
     "express-rate-limit": "^8.3.2"
+  },
+  "devDependencies": {
+    "vitest": "^3.2.4"
   }
 }
