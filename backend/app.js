@@ -1,8 +1,16 @@
+import tracer from "dd-trace";
+
+tracer.init({
+  hostname: process.env.DD_AGENT_HOST || "datadog",
+  port: 8126,
+});
+
 import express from "express";
 import session from "express-session";
 import configRoutesFunction from "./routes/index.js";
 import cors from "cors";
 import pkg from "lusca";
+
 
 const app = express();
 app.use(express.json());
@@ -21,6 +29,7 @@ const DEFAULT_CORS_ORIGINS = [
   "http://localhost",
   "http://127.0.0.1",
 ];
+
 
 const CORS_ORIGINS = (process.env.CORS_ORIGIN || DEFAULT_CORS_ORIGINS.join(","))
   .split(",")
