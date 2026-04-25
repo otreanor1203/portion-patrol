@@ -6,8 +6,10 @@
   "scripts": {
     "start": "node app.js",
     "start:seed": "npm run seed && npm start",
+    "seed:admin": "node ./tasks/seedAdmin.js",
     "seed": "node ./tasks/script.js",
-    "test": "node ./tasks/test.js"
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "keywords": [],
   "author": "Owen Treanor & Jimmy Colgan",
@@ -24,5 +26,8 @@
     "hot-shots": "^14.3.1",
     "lusca": "^1.7.0",
     "mongodb": "^6.15.0"
+  },
+  "devDependencies": {
+    "vitest": "^3.2.4"
   }
 }

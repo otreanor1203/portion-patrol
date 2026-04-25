@@ -56,8 +56,8 @@ function Chipotle() {
 
   const handleLike = async () => {
     const url = userLiked
-      ? `http://localhost:3000/users/unlike/${id}`
-      : `http://localhost:3000/users/like/${id}`;
+      ? apiUrl(`/users/unlike/${id}`)
+      : apiUrl(`/users/like/${id}`);
     try {
       const res = await authPost(url);
       if (!res.ok) throw new Error("Failed");
@@ -75,8 +75,8 @@ function Chipotle() {
 
   const handleDislike = async () => {
     const url = userDisliked
-      ? `http://localhost:3000/users/undislike/${id}`
-      : `http://localhost:3000/users/dislike/${id}`;
+      ? apiUrl(`/users/undislike/${id}`)
+      : apiUrl(`/users/dislike/${id}`);
     try {
       const res = await authPost(url);
       if (!res.ok) throw new Error("Failed");
