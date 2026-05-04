@@ -134,7 +134,12 @@ function ChipotleList() {
                 <h3>{chip.location}</h3>
                 <p>{chip.address}</p>
                 <p>{chip.state}</p>
-                <p>Rating: {chip.rating || "N/A"}</p>
+                <p>
+                  Rating:{" "}
+                  {chip.ratings && chip.ratings.length > 0
+                    ? Number(chip.overallRating).toFixed(1)
+                    : "N/A"}
+                </p>
               </Link>
               <div className="vote-buttons">
               <button
